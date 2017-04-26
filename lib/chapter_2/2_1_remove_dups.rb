@@ -10,11 +10,11 @@
 #   are unique
 #
 def remove_dups(node)
-  return if node.nil? || node.next.nil?
   set = Set.new
+
   until node.nil?
     set << node.data
-    if !node.next.nil? && set.include?(node.next.data)
+    if set.include?(node.next.data)
       node.next = node.next.next
     end
     node = node.next
@@ -29,16 +29,19 @@ end
 # Space complexity: O(1)
 #
 def remove_dups_alt(node)
-  return if node.nil? || node.next.nil?
   cursor = node
+
   until cursor.nil?
     deletion_cursor = cursor
+
     until deletion_cursor.nil?
       if !deletion_cursor.next.nil? && deletion_cursor.next.data == cursor.data
         deletion_cursor.next = deletion_cursor.next.next
       end
+
       deletion_cursor = deletion_cursor.next
     end
+
     cursor = cursor.next
   end
 end
