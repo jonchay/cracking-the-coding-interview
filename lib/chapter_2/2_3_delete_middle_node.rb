@@ -1,5 +1,5 @@
 # 2.3 Delete Middle Node
-# Impleent an algoritm to delete a node in the middle (i.e., any node but the)
+# Implement an algoritm to delete a node in the middle (i.e., any node but the)
 #   first and last node, not necessarily the exact middle) of a singly linked
 #   list, given only access to that node.
 #
