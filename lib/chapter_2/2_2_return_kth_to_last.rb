@@ -10,16 +10,14 @@
 # Space complexity: O(1)
 #
 def kth_to_last(node, k)
-  fast_cursor = node
-  slow_cursor = node
-
-  # Advance the fast_cursor so that slow_cursor always lags behind k nodes
+  current_cursor = fast_cursor = node
 
   k.times { fast_cursor = fast_cursor.next }
+
   until fast_cursor.nil?
+    current_cursor = current_cursor.next
     fast_cursor = fast_cursor.next
-    slow_cursor = slow_cursor.next
   end
 
-  slow_cursor.data
+  current_cursor.data
 end
