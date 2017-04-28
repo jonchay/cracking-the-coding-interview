@@ -13,19 +13,15 @@
 #   value to the beginning by replacing the head node.
 #
 # Time complexity: O(n), as it must iterate through the entire list
-# Space complexity: O(1), as the extra references to nodes take constant space
-#
+# Space complexity: O(1), as the extra references to nodes take constant space #
 def partition(head, partition_value)
   cursor = head
+
   until cursor.nil?
     if !cursor.next.nil? && cursor.next.data < partition_value
-      # Save the node
       tmp = cursor.next
 
-      # Delete it from the list
       cursor.next = cursor.next.next
-
-      # Move it to the beginning of the list, and replace head
       tmp.next = head
       head = tmp
     else
