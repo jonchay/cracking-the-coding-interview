@@ -20,13 +20,14 @@ def partition(head, partition_value)
   until cursor.nil?
     if !cursor.next.nil? && cursor.next.data < partition_value
       tmp = cursor.next
-
       cursor.next = cursor.next.next
+
       tmp.next = head
       head = tmp
     else
       cursor = cursor.next
     end
   end
+
   head
 end

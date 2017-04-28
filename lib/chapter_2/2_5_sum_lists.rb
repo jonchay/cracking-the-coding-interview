@@ -14,27 +14,22 @@
 #   digits in the sum of the arguments.
 #
 def sum_lists(node1, node2)
+  result = LinkedList.new
   carry = 0
-  total = LinkedList.new
+
   until node1.nil? && node2.nil?
-    # If the numbers do not have the same number of digits, consider this digit
-    #   to be zero
-    val1 = node1.nil? ? 0 : node1.data
-    val2 = node2.nil? ? 0 : node2.data
+    digit1, digit2 = ((!node1.nil? && node1.data) || 0), ((!node2.nil? && node2.data) || 0)
 
-    # Keep track of the carry value so that it may be used in calculating the
-    #   next digit
-    sum = val1 + val2 + carry
-    total.append(sum % 10)
-    carry = sum / 10
+    sum_digits = digit1 + digit2 + carry
+    result.append(sum_digits % 10)
 
-    # Move to the next larger digit
-    node1 = node1.next unless node1.nil?
-    node2 = node2.next unless node2.nil?
+    carry = sum_digits / 10
+    node1 = node1.next
+    node2 = node2.next
   end
-  # There may be an additional carry value left over
-  total.append(carry) if carry.positive?
-  total
+  result.append(carry) if carry != 0
+
+  result
 end
 
 # When the values are stored in forward order, several additional challenges
@@ -45,55 +40,59 @@ end
 #   recursion to pass the carry value backwards.
 #
 def sum_lists_forward(node1, node2)
-  # Determine lengths and pad shorter list
-  length1 = list_length(node1)
-  length2 = list_length(node2)
-  node1 = pad_list(node1, length2 - length1) if length2 > length1
-  node2 = pad_list(node2, length1 - length2) if length1 > length2
+  node1, node2 = normalize_nodes(node1, node2)
 
-  # Result includes the partial sum and possibly a carry value
-  result = recursive_add(node1, node2)
-  sum = result[:partial_sum]
+  recursive_add(node1, node2)
+end
 
-  # If there's a remaining carry value, insert it at the beginning of the list
-  if result[:carry].positive?
-    carry_node = LinkedList::Node.new(result[:carry])
-    carry_node.next = sum
-    sum = carry_node
-  end
+def normalize_nodes(node1, node2)
+  length1 = node1.to_a.length
+  length2 = node2.to_a.length
+  max_length = [length1, length2].max
 
-  # The partial sum is now the total
-  sum
+  [
+    pad_list(node1, max_length - length1),
+    pad_list(node2, max_length - length2)
+  ]
 end
 
 def recursive_add(node1, node2)
-  # When at the end of the list, stop recursing; we know the values
-  if node1.next.nil?
-    partial_result = { partial_sum: nil, carry: 0 }
-  else
-    partial_result = recursive_add(node1.next, node2.next)
+  return node1 if node2.to_a.uniq == [0]
+
+  result = LinkedList.new
+  carry = LinkedList.new
+
+  until node1.nil? && node2.nil?
+    sum = node1.data + node2.data
+    result.append(sum % 10)
+    carry.append(sum / 10)
+
+    node1 = node1.next
+    node2 = node2.next
   end
-  sum = node1.data + node2.data + partial_result[:carry]
-  carry = sum / 10
-  sum_node = LinkedList::Node.new(sum % 10)
-  sum_node.next = partial_result[:partial_sum]
-  { partial_sum: sum_node, carry: carry }
+
+  pointer = carry.head
+  until pointer.nil?
+    if pointer.next.nil?
+      pointer.next = LinkedList::Node.new(0)
+      break
+    end
+    pointer = pointer.next
+  end
+
+  carry.head = carry.head.next
+  recursive_add(result.head, carry.head)
 end
 
 def pad_list(node, pad_amount)
-  pad_amount.times do
+  return node if pad_amount.zero?
+
+  until pad_amount.zero?
     zero_node = LinkedList::Node.new(0)
     zero_node.next = node
     node = zero_node
+
+    pad_amount -= 1
   end
   node
-end
-
-def list_length(node)
-  i = 0
-  until node.nil?
-    i += 1
-    node = node.next
-  end
-  i
 end

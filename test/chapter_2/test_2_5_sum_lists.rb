@@ -31,7 +31,7 @@ class TestSumLists < Minitest::Test
 
   def test_sum_lists_forward_extra_carry
     populate_list(@list1, [6, 8, 7])
-    populate_list(@list2, [3, 9, 5])
-    assert_equal [1, 0, 8, 2], sum_lists_forward(@list1.head, @list2.head).to_a
+    populate_list(@list2, [1, 3, 9, 5])
+    assert_equal [2, 0, 8, 2], sum_lists_forward(@list1.head, @list2.head).to_a
   end
 end
